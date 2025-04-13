@@ -1,0 +1,6 @@
+.env
+minio_data/
+__pycache__/
+*.log
+*.pyc
+*.ipynb_checkpoints
