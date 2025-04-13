@@ -42,6 +42,6 @@ def upload_file_to_minio(local_file_path, object_path):
 # Exemple d’utilisation
 if __name__ == "__main__":
     upload_file_to_minio(
-        local_file_path="data/ecommerce.csv",
+        local_file_path="../data/ecommerce.csv",
         object_path="raw/ecommerce/ecommerce.csv"
     )
