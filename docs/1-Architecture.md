@@ -57,7 +57,7 @@ RUN curl -o /usr/local/spark/jars/postgresql-42.6.0.jar https://jdbc.postgresql.
     curl -o /usr/local/spark/jars/hadoop-aws-3.3.6.jar https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.6/hadoop-aws-3.3.6.jar
 
 # Installer les bibliothèques Python
-RUN pip install psycopg2-binary kafka-python boto3 delta-spark
+RUN pip install psycopg2-binary kafka-python boto3 delta-spark python-dotenv
 
 # Script pour lancer Spark selon SPARK_MODE
 COPY entrypoint.sh /entrypoint.sh
