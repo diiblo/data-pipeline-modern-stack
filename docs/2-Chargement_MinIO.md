@@ -33,10 +33,10 @@ import boto3
 from botocore.exceptions import ClientError
 
 # Charger les variables d'environnement
-MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "localhost:9000")
-MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "admin")
-MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "admin123")
-MINIO_BUCKET = os.getenv("MINIO_BUCKET", "datalake")
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
+MINIO_BUCKET = os.getenv("MINIO_BUCKET")
 
 # Initialiser la connexion MinIO
 def connect_minio():
@@ -70,7 +70,7 @@ def upload_file_to_minio(local_file_path, object_path):
 # Exemple d’utilisation
 if __name__ == "__main__":
     upload_file_to_minio(
-        local_file_path="data/ecommerce.csv",
+        local_file_path="../data/ecommerce.csv",
         object_path="raw/ecommerce/ecommerce.csv"
     )
 ```
