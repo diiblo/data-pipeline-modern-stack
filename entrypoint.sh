@@ -11,8 +11,8 @@ echo "SPARK_WORKER_MEMORY=1g" >> /usr/local/spark/conf/spark-env.sh
 
 if [ "$SPARK_MODE" == "master" ]; then
   echo "🔵 Démarrage Spark Master + Jupyter Notebook"
-
-  # Lancer Spark master en arrière-plan en tant que jovyan
+  
+  # Lancer Spark master en tant que jovyan
   su $NB_USER -c "/usr/local/spark/sbin/start-master.sh"
 
   # Lancer le notebook avec environnement Conda activé
@@ -20,6 +20,13 @@ if [ "$SPARK_MODE" == "master" ]; then
 
 elif [ "$SPARK_MODE" == "worker" ]; then
   echo "🟢 Démarrage Spark Worker"
+  
+  # Attendre que le master soit prêt
+  until nc -z spark-master 7077; do
+    echo "⏳ En attente de spark-master:7077..."
+    sleep 2
+  done
+
   su $NB_USER -c "/usr/local/spark/sbin/start-worker.sh spark://spark-master:7077"
   tail -f /dev/null
 
