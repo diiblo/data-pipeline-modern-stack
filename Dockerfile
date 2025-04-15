@@ -4,7 +4,7 @@ FROM jupyter/all-spark-notebook
 USER root
 
 # Installer des outils système
-RUN apt-get update && apt-get install -y curl git
+RUN apt-get update && apt-get install -y curl git netcat
 
 # Ajouter des connecteurs JDBC (Au choix)
 RUN curl -o /usr/local/spark/jars/postgresql-42.6.0.jar https://jdbc.postgresql.org/download/postgresql-42.6.0.jar && \

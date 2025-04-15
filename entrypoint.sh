@@ -1,36 +1,42 @@
 #!/bin/bash
 
-# Créer les logs si besoin
+# Création des logs Spark
 mkdir -p /usr/local/spark/logs
 chown -R $NB_UID:$NB_GID /usr/local/spark/logs
 
-# Configuration Spark
+# Configuration de Spark
 echo "SPARK_MASTER_HOST='spark-master'" >> /usr/local/spark/conf/spark-env.sh
 echo "SPARK_WORKER_CORES=2" >> /usr/local/spark/conf/spark-env.sh
 echo "SPARK_WORKER_MEMORY=1g" >> /usr/local/spark/conf/spark-env.sh
 
-if [ "$SPARK_MODE" == "master" ]; then
-  echo "🔵 Démarrage Spark Master + Jupyter Notebook"
-  
-  # Lancer Spark master en tant que jovyan
-  su $NB_USER -c "/usr/local/spark/sbin/start-master.sh"
-
-  # Lancer le notebook avec environnement Conda activé
+if [ "$SPARK_MODE" = "master" ]; then
+  echo "🔵 Lancement Spark Master + Jupyter Notebook"
+  /usr/local/spark/sbin/start-master.sh
   start-notebook.sh --NotebookApp.token=''
 
-elif [ "$SPARK_MODE" == "worker" ]; then
-  echo "🟢 Démarrage Spark Worker"
-  
-  # Attendre que le master soit prêt
+elif [ "$SPARK_MODE" = "worker" ]; then
+  echo "🟢 Lancement Spark Worker"
+  echo "⌛ Attente que spark-master:7077 soit prêt..."
+
+  # Vérifie que netcat est bien installé
+  if ! command -v nc &> /dev/null; then
+    echo "❌ Netcat (nc) n'est pas installé. Installer via apt-get."
+    exit 1
+  fi
+
   until nc -z spark-master 7077; do
-    echo "⏳ En attente de spark-master:7077..."
+    echo "⏳ spark-master:7077 non disponible, nouvelle tentative..."
     sleep 2
   done
 
-  su $NB_USER -c "/usr/local/spark/sbin/start-worker.sh spark://spark-master:7077"
+  echo "✅ spark-master détecté, lancement du Worker..."
+  /usr/local/spark/sbin/start-worker.sh spark://spark-master:7077
+
+  # Garder le container actif
   tail -f /dev/null
 
+
 else
-  echo "⚪ Mode inconnu, lancement Notebook seul"
+  echo "⚪ Aucun SPARK_MODE défini. Lancement Notebook seul"
   start-notebook.sh --NotebookApp.token=''
 fi
